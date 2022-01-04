@@ -1,0 +1,54 @@
+prontera,155,181,1	script	kaf	987,{
+
+    function    func_Peak   {
+        .@peak = getarg(0);
+        .@getargcount = getargcount();
+
+        mes "^0055FF[ Reward - "+.@peak+" Peak ]^000000";
+        for (.@i = 1; .@i < .@getargcount; .@i += 2) {
+            .@item_id = getarg(.@i, 0);
+            .@amount = getarg(.@i + 1, 0);
+            if (.@item_id > 0 && .@amount > 0) {
+                .@array_itemid[.@array_size] = .@item_id;
+                .@array_amount[.@array_size] = .@amount;
+                .@array_size++;
+                mes " ~ "+.@amount+"x "+getitemname(.@item_id);
+            }
+        }
+        mes " ";
+        if (.@peak > 0 && $server_online_peak >= .@peak) {
+            if (#server_online_peak < .@peak) {
+                if (select("Claim Reward", "Cancel") == 1) {
+                    if (!checkweight2(.@array_itemid, .@array_amount)) {
+                        mes "You're overweight, please clear your inventory.";
+                        close;
+                    }
+                    else {
+                        #server_online_peak = .@peak;
+                        for (.@i = 0; .@i < .@array_size; .@i++) {
+                            getitem .@array_itemid[.@i], .@amount[.@i];
+                        }
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    mes "["+strnpcinfo(0)+"]";
+    //func_Peak(<peak>, <rewards...>);
+    func_Peak(1, 501, 100);
+    func_Peak(2, 501, 1, 502, 2);
+    func_Peak(3, 501, 1, 502, 2, 503, 4);
+    func_Peak(400, 501, 1, 502, 2, 503, 4, 504, 4);
+    func_Peak(500, 501, 1, 502, 2, 503, 4, 505, 5, 607, 10);
+    mes "Thank you.";
+    close;
+
+    OnPCLoginEvent:
+        .@getusers = getusers(1);
+        if (.@getusers > $server_online_peak) {
+            $server_online_peak = .@getusers;
+        }
+        end;
+}

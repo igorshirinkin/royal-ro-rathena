@@ -1,0 +1,15 @@
+-	script	news_main	-1,{
+	OnInit:
+		// Random Message to be Announced
+		setarray .news_list$,
+			"В выходные дни активируются повышенные рейты на опыт",
+			"Оставьте своё предложение по улучшению сервера в разделе 'Заявки' в личном кабинете",
+			"В настоящее время WoE выключено. Замки недоступны";
+		.news_list_size = getarraysize(.news_list$);
+		initnpctimer;
+
+	OnTimer3600000: // announce every 60 seconds.
+		announce .news_list$[rand(.news_list_size)], bc_all,0xA7DD4A;
+		initnpctimer;
+		end;
+}
